@@ -5,7 +5,7 @@
  */
 package com.cleardev.filter;
 
-import com.cleardev.filter.config.Params;
+import com.cleardev.config.Params;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -26,21 +26,25 @@ import javax.servlet.http.HttpSession;
  */
 @WebFilter(filterName = "AdminFilter", urlPatterns = {"/adm/*"})
 public class AdminFilter implements Filter {
-    
+
     public AdminFilter() {
-    }    
-    
+    }
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response,
             FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest httpReq = (HttpServletRequest) request;
         HttpSession session = httpReq.getSession(true);
-        JsonObject current_user = (JsonObject) session.getAttribute(Params.CURRENT_USER.toString());
-        if( current_user == null ){
-            HttpServletResponse httpResp = (HttpServletResponse) response;
-            RequestDispatcher requestDispatcher = httpReq.getRequestDispatcher("/login");
-            requestDispatcher.forward(request, response);
+        if (httpReq.getMethod().equalsIgnoreCase("get")) {
+            JsonObject current_user = (JsonObject) session.getAttribute(Params.CURRENT_USER.toString());
+            if (current_user == null) {
+                HttpServletResponse httpResp = (HttpServletResponse) response;
+                RequestDispatcher requestDispatcher = httpReq.getRequestDispatcher("/adm/login");
+                requestDispatcher.forward(request, response);
+            }
+        }else{
+            chain.doFilter(request, response);
         }
     }
 

@@ -23,7 +23,7 @@
             <input type="password" id="password" name="password" placeholder="Contrase&ntilde;a" />
         </div>
         <div style="margin-top: 20px;">
-            <button>Entrar</button>
+            <input type="submit" value="Entrar">
         </div>
     </div>
 </form>
