@@ -14,13 +14,13 @@
             <div style="text-align: left;">
                 <label for="username">Usuario:</label>
             </div>
-            <input type="text" id="username" name="username" />
+            <input type="text" id="username" name="username" placeholder="Usuario" />
         </div>
         <div>
             <div style="text-align: left;">
                 <label for="password">Contrase&ntilde;a:</label>
             </div>
-            <input type="password" id="password" name="password" />
+            <input type="password" id="password" name="password" placeholder="Contrase&ntilde;a" />
         </div>
         <div style="margin-top: 20px;">
             <button>Entrar</button>
