@@ -12,6 +12,7 @@
 
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/normalize.css">
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/main.css">
+        <link href='http://fonts.googleapis.com/css?family=Fjord+One' rel='stylesheet' type='text/css'>
         <script src="${pageContext.servletContext.contextPath}/js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body class="theme1 color3">
