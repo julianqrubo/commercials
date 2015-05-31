@@ -12,15 +12,18 @@
     <div class="color3">
         <div style="margin-bottom: 20px;">
             <div style="text-align: left;">
-                <label>Usuario:</label>
+                <label for="username">Usuario:</label>
             </div>
             <input type="text" id="username" name="username" />
         </div>
         <div>
             <div style="text-align: left;">
-                <label>Contrase&ntilde;a:</label>
+                <label for="password">Contrase&ntilde;a:</label>
             </div>
             <input type="password" id="password" name="password" />
+        </div>
+        <div style="margin-top: 20px;">
+            <button>Entrar</button>
         </div>
     </div>
 </form>

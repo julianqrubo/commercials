@@ -348,8 +348,9 @@ a:hover{
 
 #login-form>div{
     display: inline-block;
-    border-radius: 20px;
+    border-radius: 5px;
     padding: 20px;
+    border: solid 1px #ccc;
 }
 
 #login-form input, #login-form label{
