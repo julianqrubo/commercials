@@ -16,17 +16,16 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author shareppy
  */
-@WebServlet(name = "Users", urlPatterns = {"/adm/users"})
-public class Users extends BaseServlet {
-
+@WebServlet(name = "Commercials_info", urlPatterns = {"/adm/commercials_info"})
+public class Commercials_info extends BaseServlet {
+    
     @Override
     protected String getView() {
-        return "users.jsp";
+        return "commercials_info.jsp";
     }
 
     @Override
     protected void post(HttpServletRequest request, HttpServletResponse response, Connection connection) throws ServletException, IOException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
 }

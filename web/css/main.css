@@ -350,7 +350,21 @@ a:hover{
     text-align: center;
 }
 
+#form-data{
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
 #login-form>div{
+    display: inline-block;
+    border-radius: 5px;
+    padding: 20px;
+    border: solid 1px #ccc;
+}
+
+#form-data>div{
     display: inline-block;
     border-radius: 5px;
     padding: 20px;
@@ -360,5 +374,11 @@ a:hover{
 #login-form input, #login-form label{
     display: block;
     width: 300px;
+    height: 30px;
+}
+
+#form-data input, #form-data label{
+    display: block;
+    width: 600px;
     height: 30px;
 }
