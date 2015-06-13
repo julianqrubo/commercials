@@ -20,7 +20,7 @@ public abstract class RowProcessor {
     public RowProcessor() {
     }
     
-    public abstract boolean processRow();
+    public abstract boolean processRow() throws Exception;
     
     public void setResult(ResultSet set){
         this.set = set;

@@ -39,7 +39,8 @@ public class AdminFilter implements Filter {
         if (httpReq.getMethod().equalsIgnoreCase("get")) {
             JsonObject current_user = (JsonObject) session.getAttribute(Params.CURRENT_USER.toString());
             if (current_user == null) {
-                HttpServletResponse httpResp = (HttpServletResponse) response;
+                String requestedPath = httpReq.getRequestURI();
+                session.setAttribute(Params.REQUESTED_PATH.toString(), requestedPath);
                 RequestDispatcher requestDispatcher = httpReq.getRequestDispatcher("/adm/login");
                 requestDispatcher.forward(request, response);
             }else{

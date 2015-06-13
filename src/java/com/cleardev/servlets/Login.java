@@ -7,11 +7,11 @@ package com.cleardev.servlets;
 
 import com.cleardev.config.Params;
 import com.cleardev.db.RowProcessor;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class Login extends BaseServlet {
         StringBuilder resp = new StringBuilder("Error de inicio de sesión");
         query("SELECT   id, names, lastnames, username, password, info FROM security.user WHERE username = ? AND password = ?", new RowProcessor() {
             @Override
-            public boolean processRow() {
+            public boolean processRow() throws Exception{
                 Long id = get("id");
                 String lastnames = get("lastnames");
                 String username = get("username");
@@ -54,6 +54,7 @@ public class Login extends BaseServlet {
                     jsonObject.addProperty("username", (String)get("username"));
                     jsonObject.addProperty("info", (String)get("info"));
                     request.getSession(true).setAttribute(Params.CURRENT_USER.toString(), jsonObject);
+                    response.sendRedirect((String) request.getSession(true).getAttribute(Params.REQUESTED_PATH.toString()));
                 }
                 return false;
             }
