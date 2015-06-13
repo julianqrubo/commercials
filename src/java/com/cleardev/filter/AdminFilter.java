@@ -42,6 +42,8 @@ public class AdminFilter implements Filter {
                 HttpServletResponse httpResp = (HttpServletResponse) response;
                 RequestDispatcher requestDispatcher = httpReq.getRequestDispatcher("/adm/login");
                 requestDispatcher.forward(request, response);
+            }else{
+            chain.doFilter(request, response);
             }
         }else{
             chain.doFilter(request, response);

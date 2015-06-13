@@ -1,7 +1,7 @@
 <%@include file="tpl/header.jsp" %>
 
 <div id="top-header" class="color1">
-    <!--    <a class="signin" href="#">
+<!--    <a class="signin" href="#">
             <span class="signin-icon">&nbsp;</span>
             <span class="signin-text">Inicio de sesi&oacute;n</span>
         </a>-->

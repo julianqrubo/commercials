@@ -7,6 +7,8 @@ package com.cleardev.servlets;
 
 import com.cleardev.config.Params;
 import com.cleardev.db.RowProcessor;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -39,9 +41,19 @@ public class Login extends BaseServlet {
             @Override
             public boolean processRow() {
                 Long id = get("id");
+                String lastnames = get("lastnames");
+                String username = get("username");
+                String info = get("info");
                 if( id != null ){
                     resp.delete(0,resp.length());
                     resp.append("Bienvenido...");
+                    JsonObject jsonObject = new JsonObject();
+                    jsonObject.addProperty("id",  Long.valueOf((Long)get("id")));
+                    jsonObject.addProperty("names", (String)get("names"));
+                    jsonObject.addProperty("lastnames", (String)get("lastnames"));
+                    jsonObject.addProperty("username", (String)get("username"));
+                    jsonObject.addProperty("info", (String)get("info"));
+                    request.getSession(true).setAttribute(Params.CURRENT_USER.toString(), jsonObject);
                 }
                 return false;
             }
