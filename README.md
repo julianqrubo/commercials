@@ -1,2 +1,0 @@
-# commercials
-Anuncios publicitarios
