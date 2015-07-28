@@ -9,15 +9,31 @@ package com.nemesis.entity;
  *
  * @author shareppy
  */
-public class Country extends Entity{
-
+public class City extends Entity{
+    
+    private long country;
+    private long department;
     private String name;
     private String code;
-
-    public Country() {
+    
+    public City() {
         super();
     }
-
+    
+    /**
+     * @return the country
+     */
+    public long getCountry() {
+        return country;
+    }
+    
+    /**
+     * @return the department
+     */
+    public long getDepartement() {
+        return department;
+    }
+    
     /**
      * @return the name
      */
@@ -31,7 +47,21 @@ public class Country extends Entity{
     public String getCode() {
         return code;
     }
-
+    
+    /**
+     * @param country the country to set
+     */
+    public void setCountry(long country) {
+        this.country = country;
+    }
+    
+    /**
+     * @param department the department to set
+     */
+    public void setDepartment(long department) {
+        this.department = department;
+    }
+    
     /**
      * @param name the name to set
      */

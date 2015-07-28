@@ -9,6 +9,7 @@ import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import com.nemesis.entity.Country;
 import com.nemesis.entity.Department;
+import com.nemesis.entity.City;
 import com.nemesis.entity.Entity;
 import com.nemesis.entity.User;
 import java.sql.Connection;
@@ -44,7 +45,8 @@ public class DDLTest {
         return Arrays.asList(new Entity[][]{
             {new User()},
             {new Country()},
-            {new Department()}
+            {new Department()},
+            {new City()}
         });
     }
 

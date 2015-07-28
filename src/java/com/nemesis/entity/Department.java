@@ -12,8 +12,8 @@ package com.nemesis.entity;
 public class Department extends Entity{
     
     private long country;
-    
     private String name;
+    private String code;
 
     public Department() {
         super();
@@ -25,12 +25,26 @@ public class Department extends Entity{
     public String getName() {
         return name;
     }
+    
+    /**
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
     /**
      * @param name the name to set
      */
     public void setName(String name) {
         this.name = name;
+    }
+    
+    /**
+     * @param code the code to set
+     */
+    public void setCode(String code) {
+        this.code = code;
     }
 
     /**
