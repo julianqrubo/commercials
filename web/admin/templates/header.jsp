@@ -9,9 +9,13 @@
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/themes/default/jquery.mobile-1.4.5.min.css">
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/_assets/css/jqm-demos.css">
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
+        <script>
+            var _app_root = '${pageContext.servletContext.contextPath}';
+        </script>
         <script src="${pageContext.servletContext.contextPath}/js/jquery.js"></script>
         <script src="${pageContext.servletContext.contextPath}/_assets/js/index.js"></script>
         <script src="${pageContext.servletContext.contextPath}/js/jquery.mobile-1.4.5.min.js"></script>
+        <script src="${pageContext.servletContext.contextPath}/js/main.js"></script>
     </head>
     <body>
         <div data-role="page" class="jqm-demos jqm-home">

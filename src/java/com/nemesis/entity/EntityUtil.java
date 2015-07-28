@@ -8,7 +8,6 @@ package com.nemesis.entity;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -125,7 +124,7 @@ public class EntityUtil {
         for (Object fieldValue : fieldValues) {
             final Class<? extends Object> clazz = fieldValue.getClass();
             if (EntityUtil.isLong(clazz) || EntityUtil.isInt(clazz)) {
-                prepareStatement.setLong(parameterIndex, (Long)fieldValue);
+                prepareStatement.setLong(parameterIndex, (Long) fieldValue);
             } else if (EntityUtil.isString(fieldValue.getClass())) {
                 prepareStatement.setString(parameterIndex, (String) fieldValue);
             }

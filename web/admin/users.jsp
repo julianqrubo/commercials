@@ -2,7 +2,7 @@
 <%@include file="templates/header.jsp" %>
 
 <div data-role="header">
-    <h3>Usuarios</h3><a href="${pageContext.servletContext.contextPath}/admin/users/create" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-plus">Crear</a>
+    <h3>${_title_}</h3><a href="${pageContext.servletContext.contextPath}/admin/users/create" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-corner-all ui-btn-icon-right ui-icon-plus">Crear</a>
 </div>
 
 <form>
@@ -13,6 +13,7 @@
                 <tr>
                         <th data-priority="persist">Nombre</th>
                         <th data-priority="4">Correo</th>
+                        <th data-priority="5">Estado</th>
                     </tr>
                 </thead>
             <tbody>
@@ -20,6 +21,7 @@
                         <tr>
                                 <td><a href="users/edit/${user.id}">${user.names} ${user.last_names}</a></td>
                                 <td>${user.email}</td>
+                                <td>${user.stateText}</td>
                             </tr>
             </c:forEach>
                 </tbody>

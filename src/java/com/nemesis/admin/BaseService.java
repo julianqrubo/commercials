@@ -5,17 +5,23 @@
  */
 package com.nemesis.admin;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.jolbox.bonecp.BoneCP;
+import com.nemesis.entity.Department;
 import com.nemesis.entity.Entity;
+import com.nemesis.entity.User;
 import com.nemesis.entity.EntityUtil;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.ResultSet;
 import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,51 +32,100 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import sun.awt.X11.XConstants;
 
 /**
  *
  * @author shareppy
+ * @param <T>
  */
-public abstract class BaseService extends HttpServlet {
+public abstract class BaseService<T extends Entity> extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         final String[] parts = request.getRequestURI().split("/");
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher(getView(request, parts));
-        requestDispatcher.forward(request, response);
+        if (isList(parts)) {
+            try {
+                sendList(request, response, getPart(5, parts));
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ServletException("Error al mostrar la vista", e);
+            }
+            return;
+        }
+        try {
+            RequestDispatcher requestDispatcher = request.getRequestDispatcher(getView(request, parts));
+            requestDispatcher.forward(request, response);
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new ServletException("Error al mostrar la vista", e);
+        }
     }
-    
-    protected <T extends Entity> void loadEntity(T entity) throws IllegalArgumentException, IllegalAccessException{
+
+    protected void setTitle(HttpServletRequest rq, String title) {
+        rq.setAttribute("_title_", title);
+    }
+
+    protected String getView(HttpServletRequest rq, String... parts) throws InstantiationException, IllegalAccessException {
+        if (isCreate(parts)) {
+            return getEditView(rq, true);
+        }
+        if (isEdit(parts)) {
+            final String id = getPart(5, parts);
+            rq.setAttribute("id", id);
+            rq.setAttribute("_entity_", getEntity().newInstance());
+            try {
+                final T entty = getEntity().newInstance();
+                entty.setId(EntityUtil.getLong(id));
+                loadEntity(entty);
+                rq.setAttribute("_entity_", entty);
+            } catch (IllegalArgumentException | IllegalAccessException ex) {
+                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+            return getEditView(rq, false);
+        }
+        try {
+            rq.setAttribute("__list__", loadEntities());
+        } catch (IllegalArgumentException | IllegalAccessException | InstantiationException ex) {
+            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return getSearchView(rq);
+    }
+
+    protected String getEditView(HttpServletRequest request, boolean isCreate) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    protected String getSearchView(HttpServletRequest rq) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    protected void loadEntity(T entity) throws IllegalArgumentException, IllegalAccessException {
         BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
         try {
             try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(entity.getSelectSQL())) {
                 prepareStatement.setLong(1, entity.getId());
                 ResultSet result = prepareStatement.executeQuery();
-                if(result.next()){
+                if (result.next()) {
                     getRowEntity(entity, result);
                 }
             }
         } catch (SQLException ex) {
             Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
         }
-    } 
+    }
 
-    protected <T extends Entity> void getRowEntity(T entity, ResultSet result) throws IllegalArgumentException, SecurityException, IllegalAccessException, SQLException {
+    protected void getRowEntity(T entity, ResultSet result) throws IllegalArgumentException, SecurityException, IllegalAccessException, SQLException {
         List<Field> fields = EntityUtil.getFields(entity.getClass());
         for (Field field : fields) {
             Class<?> type = field.getType();
             field.setAccessible(true);
-            if(EntityUtil.isInt(type) || EntityUtil.isLong(type)){
+            if (EntityUtil.isInt(type) || EntityUtil.isLong(type)) {
                 field.setLong(entity, result.getLong(field.getName()));
-            }else if(EntityUtil.isString(type)){
+            } else if (EntityUtil.isString(type)) {
                 field.set(entity, result.getString(field.getName()));
             }
         }
     }
-
-    protected abstract String getView(HttpServletRequest rq, String... parts);
 
     protected String getPart(int index, String... parts) {
         if (parts != null && parts.length > index) {
@@ -93,6 +148,13 @@ public abstract class BaseService extends HttpServlet {
         return "edit".equalsIgnoreCase(getPart(4, parts));
     }
 
+    protected boolean isList(String... parts) {
+        if (parts == null) {
+            return false;
+        }
+        return "list".equalsIgnoreCase(getPart(4, parts));
+    }
+
     protected boolean isSearch(String... parts) {
         return !isCreate(parts) && !isEdit(parts);
     }
@@ -106,7 +168,7 @@ public abstract class BaseService extends HttpServlet {
             params.put(nextElement, req.getParameter(nextElement));
         }
         try {
-            final String saveResult = save(EntityUtil.getEntity(getEntity(), req));
+            final String saveResult = save(beforeSave(req, EntityUtil.getEntity(getEntity(), req)));
             if (saveResult != null) {
                 resp.sendRedirect(saveResult);
             } else {
@@ -120,7 +182,11 @@ public abstract class BaseService extends HttpServlet {
         }
     }
 
-    protected <T extends Entity> String save(T entity) throws IllegalArgumentException, IllegalAccessException {
+    protected T beforeSave(HttpServletRequest req, T entity) {
+        return entity;
+    }
+
+    protected String save(T entity) throws IllegalArgumentException, IllegalAccessException {
         BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
         try {
             final String saveSQL = entity.getSaveSQL();
@@ -139,5 +205,56 @@ public abstract class BaseService extends HttpServlet {
         return null;
     }
 
-    protected abstract Class<? extends Entity> getEntity();
+    protected Class<T> getEntity() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    protected List<T> loadEntities() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+        List<T> entities = new ArrayList<>();
+        BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
+        try {
+            T entity = getEntity().newInstance();
+            try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(entity.getSelectSQL(true))) {
+                ResultSet result = prepareStatement.executeQuery();
+                while (result.next()) {
+                    entity = getEntity().newInstance();
+                    getRowEntity(entity, result);
+                    entities.add(entity);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return entities;
+    }
+
+    private void sendList(HttpServletRequest request, HttpServletResponse response, String part) throws InstantiationException, IllegalAccessException, IOException {
+        List<T> entities = new ArrayList<>();
+        BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
+        try {
+            T entity = getEntity().newInstance();
+            try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(entity.getSelectSQL(2))) {
+                prepareStatement.setString(1, request.getParameter("q").concat("%"));
+                ResultSet result = prepareStatement.executeQuery();
+                while (result.next()) {
+                    entity = getEntity().newInstance();
+                    getRowEntity(entity, result);
+                    entities.add(entity);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        sendJSON(response, new GsonBuilder().create().toJson(entities));
+    }
+    
+    protected void sendJSON(HttpServletResponse response, String json) throws IOException{
+        response.setContentType("application/json");
+        try( PrintWriter writer = response.getWriter()){
+            writer.print(json);
+            writer.flush();
+        }
+        
+    }
 }

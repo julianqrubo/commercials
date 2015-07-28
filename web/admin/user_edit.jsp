@@ -1,9 +1,8 @@
 <%@include file="templates/header.jsp" %>
 <h1>${_title_}</h1>
 
-
 <form action="${pageContext.servletContext.contextPath}/admin/users" method="post">
-    
+
     <input type="hidden" id="id" name="id" value="${id}"/>
 
     <label for="names">Nombres:</label>
@@ -20,6 +19,20 @@
 
     <label for="password">Contrase&ntilde;a:</label>
     <input type="password" name="password" id="password" value="${_entity_.password}" req="true" />
+
+    <label for="state">Estado:</label>
+    <select id="state" name="state" data-role="flipswitch" data-wrapper-class="custom-size-flipswitch">
+        <option value="0" ${ _entity_.state == 0 ? "selected='true'" : "" }>Inactivo</option>
+        <option value="1" ${ _entity_.state == 1 ? "selected='true'" : "" }>Activo</option>
+    </select>
+
+    <fieldset data-role="controlgroup">
+        <legend>Derechos:</legend>
+        <input type="checkbox" name="right1" id="right1" ${ _entity_.right1 ? "checked='checked'" : "" } value="1" >
+            <label for="right1">Administrar perfil</label>
+            <input type="checkbox" name="right2" id="right2" ${ _entity_.right2 ? "checked='checked'" : "" } value="2">
+            <label for="right2">Administrar aplicación</label>
+    </fieldset>
 
     <input type="submit" value="Guardar" />
 

@@ -5,6 +5,8 @@
  */
 package com.nemesis.entity;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.StringJoiner;
@@ -14,7 +16,9 @@ import java.util.StringJoiner;
  * @author shareppy
  */
 public class Entity {
-
+    
+    
+    
     private long id;
 
     public Entity() {
@@ -86,6 +90,10 @@ public class Entity {
     }
 
     public String getSelectSQL(boolean isSearch) {
+        return getSelectSQL(isSearch ? 0: 1);
+    }
+    
+    public String getSelectSQL(int type) {
         StringBuilder ddl = new StringBuilder("SELECT ");
         StringBuilder fieldssb = new StringBuilder();
         List<Field> fields = EntityUtil.getFields(getClass());
@@ -93,9 +101,19 @@ public class Entity {
             fieldssb.append(",").append(field.getName());
         });
         ddl.append(fieldssb.substring(1)).append(" FROM ").append(EntityUtil.getFullTableName(getClass()));
-        if (!isSearch) {
+        if (type == 1) {
             ddl.append(" WHERE id = ?");
         }
+        if (type == 2) {
+            ddl.append(" WHERE name like ?");
+        }
         return ddl.toString();
+    }
+    
+    @Override
+    public String toString() {
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+        return gson.toJson(this);
     }
 }

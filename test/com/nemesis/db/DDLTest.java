@@ -7,6 +7,8 @@ package com.nemesis.db;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
+import com.nemesis.entity.Country;
+import com.nemesis.entity.Department;
 import com.nemesis.entity.Entity;
 import com.nemesis.entity.User;
 import java.sql.Connection;
@@ -40,7 +42,9 @@ public class DDLTest {
     @Parameters
     public static Collection<Entity[]> data() {
         return Arrays.asList(new Entity[][]{
-            {new User()}
+            {new User()},
+            {new Country()},
+            {new Department()}
         });
     }
 
@@ -94,9 +98,9 @@ public class DDLTest {
 
     @Test
     public void create_tables() throws SQLException {
-        final String schemaDDL = this.entity.getSchemaDDL();
-        System.out.println(schemaDDL);
-        statement.executeUpdate(schemaDDL);
+//        final String schemaDDL = this.entity.getSchemaDDL();
+//        System.out.println(schemaDDL);
+//        statement.executeUpdate(schemaDDL);
         final String ddl = this.entity.getDDL();
         System.out.println(ddl);
         statement.executeUpdate(ddl);

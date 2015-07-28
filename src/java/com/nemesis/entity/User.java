@@ -5,9 +5,6 @@
  */
 package com.nemesis.entity;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 /**
  *
  * @author shareppy
@@ -19,13 +16,8 @@ public class User extends Entity {
     private String email;
     private String username;
     private String password;
-
-    @Override
-    public String toString() {
-        GsonBuilder builder = new GsonBuilder();
-        Gson gson = builder.create();
-        return gson.toJson(this);
-    }
+    private long rights;
+    private long state;
 
     /**
      * @return the names
@@ -96,6 +88,47 @@ public class User extends Entity {
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
+
+    /**
+     * @return the rights
+     */
+    public long getRights() {
+        return rights;
+    }
+
+    /**
+     * @param rights the rights to set
+     */
+    public void setRights(long rights) {
+        this.rights = rights;
+    }
+
+    /**
+     * @return the state
+     */
+    public long getState() {
+        return state;
+    }
+
+    /**
+     * @param state the state to set
+     */
+    public void setState(long state) {
+        this.state = state;
+    }
+
+    public boolean getRight1() {
+        return (getRights() & 1) == 1;
+    }
+
+    public boolean getRight2() {
+        return (getRights() & 2) == 2;
+    }
+
+    public String getStateText() {
+        if (state == 0) {
+            return "Inactivo";
+        }
+        return "Activo";
+    }
 }

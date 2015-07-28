@@ -5,8 +5,6 @@
  */
 package com.nemesis.admin;
 
-import com.nemesis.entity.Entity;
-import java.util.Map;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,17 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class HomeService extends BaseService {
 
     @Override
-    protected String getView(HttpServletRequest rq, String ... parts) {
+    protected String getView(HttpServletRequest rq, String... parts) {
         return "admin/home.jsp";
-    }
-
-    @Override
-    protected <T extends Entity> String save(T entity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    protected Class<? extends Entity> getEntity() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
