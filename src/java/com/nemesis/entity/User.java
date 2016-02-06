@@ -137,6 +137,8 @@ public class User extends Entity {
     public boolean getType3() {
         return (getType() & 3) == 3;
     }
+    
+    
 
     public String getStateText() {
         if (state == 0) {

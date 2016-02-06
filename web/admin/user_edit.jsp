@@ -29,7 +29,7 @@
     <fieldset data-role="controlgroup">
         <legend>Derechos:</legend>
         <input type="checkbox" name="right1" id="right1" ${ _entity_.right1 ? "checked='checked'" : "" } value="1" >
-        <label for="right1">Administrar perfil</label>
+        <label for="right1">Administrar anuncios</label>
         <input type="checkbox" name="right2" id="right2" ${ _entity_.right2 ? "checked='checked'" : "" } value="2">
         <label for="right2">Administrar aplicación</label>
     </fieldset>
