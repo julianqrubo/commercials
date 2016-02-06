@@ -14,5 +14,6 @@ public class Constants {
     public static final String __USER__ = "__user__";
     
     public static final int SEARCH = 0;
-    public static final int LIST = 1;
+    public static final int LOAD = 1;
+    public static final int LIST = 2;
 }

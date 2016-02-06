@@ -97,14 +97,17 @@ public class Entity implements Serializable{
     }
 
     public String getSelectSQL(boolean isSearch) {
-        return getSelectSQL(isSearch ? Constants.SEARCH : Constants.LIST);
+        return getSelectSQL(isSearch ? Constants.SEARCH : Constants.LOAD);
     }
 
     public String getSelectSQL(int type) {
-        if (type == Constants.SEARCH) {
+        if (type == Constants.LOAD) {
             return getSelectByCondition( " WHERE id = ?" );
         }
+        if( type == Constants.LIST ){
         return getSelectByCondition( " WHERE UPPER(name) like UPPER(?)" );
+        }
+        return getSelectByCondition( "" );
     }
     
     public String getSelectByCondition(String condition) {
