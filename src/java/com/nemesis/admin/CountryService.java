@@ -6,10 +6,6 @@
 package com.nemesis.admin;
 
 import com.nemesis.entity.Country;
-import com.nemesis.entity.EntityUtil;
-import com.nemesis.entity.User;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author shareppy
  */
-@WebServlet(name = "CountryService", urlPatterns = {"/admin/countries", "/admin/countries/create", "/admin/countries/edit/*", "/admin/countries/list"})
+@WebServlet(name = "CountryService", urlPatterns = {"/admin/countries", "/admin/countries/create", "/admin/countries/edit/*", "/admin/countries/list", "/admin/countries/delete/*",})
 public class CountryService extends BaseService<Country> {
 
     @Override

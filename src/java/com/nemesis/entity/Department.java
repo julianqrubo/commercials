@@ -5,12 +5,15 @@
  */
 package com.nemesis.entity;
 
+import com.nemesis.metadata.Ref;
+
 /**
  *
  * @author shareppy
  */
 public class Department extends Entity{
     
+    @Ref(value=Country.class, labelField = "countryLabel")
     private long country;
     private String name;
     private String code;

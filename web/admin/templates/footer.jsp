@@ -1,7 +1,7 @@
 </div><!-- /content -->
 <div data-role="panel" class="jqm-navmenu-panel" data-position="left" data-display="overlay" data-theme="a">
     <ul class="jqm-list ui-alt-icon ui-nodisc-icon">
-        <li data-filtertext="demos homepage" data-icon="home"><a href="${pageContext.servletContext.contextPath}/admin">Inicio</a></li>
+        <li data-filtertext="Inicio" data-icon="home"><a href="${pageContext.servletContext.contextPath}/admin">Inicio</a></li>
         <li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
             <h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
                 <a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
@@ -67,11 +67,12 @@
                 </ul>
             </div>
         </li>
+        <li data-filtertext="Cerrar sesión" data-icon="lock"><a href="${pageContext.servletContext.contextPath}/admin/logout">Cerrar sesi&oacute;n</a></li>
     </ul>
 </div><!-- /panel -->
 <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="jqm-footer">
     <p>Tus anuncios 2.0</p>
-    <p>Copyright 2014 - Nemesis</p>
+    <p>Copyright 2015 - Nemesis</p>
 </div><!-- /footer -->
 </div><!-- /page -->
 </body>

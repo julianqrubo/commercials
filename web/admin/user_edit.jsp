@@ -29,9 +29,19 @@
     <fieldset data-role="controlgroup">
         <legend>Derechos:</legend>
         <input type="checkbox" name="right1" id="right1" ${ _entity_.right1 ? "checked='checked'" : "" } value="1" >
-            <label for="right1">Administrar perfil</label>
-            <input type="checkbox" name="right2" id="right2" ${ _entity_.right2 ? "checked='checked'" : "" } value="2">
-            <label for="right2">Administrar aplicación</label>
+        <label for="right1">Administrar perfil</label>
+        <input type="checkbox" name="right2" id="right2" ${ _entity_.right2 ? "checked='checked'" : "" } value="2">
+        <label for="right2">Administrar aplicación</label>
+    </fieldset>
+
+    <fieldset data-role="controlgroup">
+        <legend>Clasificaci&oacute;n</legend>
+        <input type="radio" name="type" id="type1" ${ _entity_.type1 ? "checked='checked'" : "" } value="1" >
+        <label for="type1">Oro</label>
+        <input type="radio" name="type" id="type2" ${ _entity_.type2 ? "checked='checked'" : "" } value="2">
+        <label for="type2">Plata</label>
+        <input type="radio" name="type" id="type3" ${ _entity_.type3 ? "checked='checked'" : "" } value="3">
+        <label for="type3">Bronce</label>
     </fieldset>
 
     <input type="submit" value="Guardar" />

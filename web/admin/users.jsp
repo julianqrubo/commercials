@@ -6,9 +6,9 @@
 </div>
 
 <form>
-        <input id="filterTable-input" data-type="search">
+        <input id="filterTable-input-users" data-type="search">
 </form>
-<table data-role="table" id="movie-table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
+<table data-role="table" id="users-table" data-filter="true" data-input="#filterTable-input-users" class="ui-responsive">
         <thead>
                 <tr>
                         <th data-priority="persist">Nombre</th>

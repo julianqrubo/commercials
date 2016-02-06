@@ -17,6 +17,7 @@ public class User extends Entity {
     private String username;
     private String password;
     private long rights;
+    private long type;
     private long state;
 
     /**
@@ -125,10 +126,36 @@ public class User extends Entity {
         return (getRights() & 2) == 2;
     }
 
+    public boolean getType1() {
+        return (getType() & 1) == 1;
+    }
+    
+    public boolean getType2() {
+        return (getType() & 2) == 2;
+    }
+    
+    public boolean getType3() {
+        return (getType() & 3) == 3;
+    }
+
     public String getStateText() {
         if (state == 0) {
             return "Inactivo";
         }
         return "Activo";
+    }
+
+    /**
+     * @return the type
+     */
+    public long getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(long type) {
+        this.type = type;
     }
 }

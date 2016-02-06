@@ -8,6 +8,7 @@
         <link rel="shortcut icon" href="${pageContext.servletContext.contextPath}/favicon.ico">
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/themes/default/jquery.mobile-1.4.5.min.css">
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/_assets/css/jqm-demos.css">
+        <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/main.css">
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
         <script>
             var _app_root = '${pageContext.servletContext.contextPath}';

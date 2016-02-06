@@ -6,9 +6,9 @@
 </div>
 
 <form>
-        <input id="filterTable-input" data-type="search">
+        <input id="filterTable-input-deptartments" data-type="search">
 </form>
-<table data-role="table" id="movie-table" data-filter="true" data-input="#filterTable-input" class="ui-responsive">
+<table data-role="table" id="departments-table" data-filter="true" data-input="#filterTable-input-deptartments" class="ui-responsive">
     <thead>
         <tr>
             <th data-priority="persist">Nombre</th>
@@ -17,7 +17,7 @@
     <tbody>
         <c:forEach items="${__list__}" var="department" >
             <tr>
-                <td><a href="countries/edit/${department.id}">${department.name}</a></td>
+                <td><a href="departments/edit/${department.id}">${department.name}</a></td>
             </tr>
         </c:forEach>
     </tbody>

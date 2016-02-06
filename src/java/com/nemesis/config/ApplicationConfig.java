@@ -28,8 +28,8 @@ public class ApplicationConfig implements ServletContextListener {
             Class.forName("org.postgresql.Driver"); 	// load the DB driver
             BoneCPConfig config = new BoneCPConfig();	// create a new configuration object
             config.setJdbcUrl("jdbc:postgresql://localhost:5432/commercials2");	// set the JDBC url
-            config.setUsername("postgres");			// set the username
-            config.setPassword("shareppy");				// set the password
+            config.setUsername("sppyuser");			// set the username
+            config.setPassword("Sh4r3pp7");				// set the password
             BoneCP connectionPool = new BoneCP(config); 	// setup the connection pool
             sce.getServletContext().setAttribute("__pool__", connectionPool);
             Logger.getLogger(ApplicationConfig.class.getName()).log(Level.INFO, "Se Ha inicializado el pool de conexiones.");

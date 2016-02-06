@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author shareppy
  */
-@WebServlet(name = "DepartmentService", urlPatterns = {"/admin/departments", "/admin/departments/create", "/admin/departments/edit/*"})
+@WebServlet(name = "DepartmentService", urlPatterns = {"/admin/departments", "/admin/departments/create", "/admin/departments/edit/*", "/admin/departments/list", "/admin/departments/delete/*"})
 public class DepartmentService extends BaseService<Department> {
 
     @Override

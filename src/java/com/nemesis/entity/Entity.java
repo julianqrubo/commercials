@@ -10,14 +10,14 @@ import com.google.gson.GsonBuilder;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.StringJoiner;
+import com.nemesis.admin.utils.Constants;
+import java.io.Serializable;
 
 /**
  *
  * @author shareppy
  */
-public class Entity {
-    
-    
+public class Entity implements Serializable{
     
     private long id;
 
@@ -35,6 +35,13 @@ public class Entity {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getDeleteSQL() {
+        StringBuilder sql = new StringBuilder("DELETE FROM ");
+        sql.append(EntityUtil.getFullTableName(getClass()))
+                .append(" WHERE id = ? ");
+        return sql.toString();
     }
 
     public String getSaveSQL() {
@@ -90,10 +97,17 @@ public class Entity {
     }
 
     public String getSelectSQL(boolean isSearch) {
-        return getSelectSQL(isSearch ? 0: 1);
+        return getSelectSQL(isSearch ? Constants.SEARCH : Constants.LIST);
+    }
+
+    public String getSelectSQL(int type) {
+        if (type == Constants.SEARCH) {
+            return getSelectByCondition( " WHERE id = ?" );
+        }
+        return getSelectByCondition( " WHERE UPPER(name) like UPPER(?)" );
     }
     
-    public String getSelectSQL(int type) {
+    public String getSelectByCondition(String condition) {
         StringBuilder ddl = new StringBuilder("SELECT ");
         StringBuilder fieldssb = new StringBuilder();
         List<Field> fields = EntityUtil.getFields(getClass());
@@ -101,15 +115,10 @@ public class Entity {
             fieldssb.append(",").append(field.getName());
         });
         ddl.append(fieldssb.substring(1)).append(" FROM ").append(EntityUtil.getFullTableName(getClass()));
-        if (type == 1) {
-            ddl.append(" WHERE id = ?");
-        }
-        if (type == 2) {
-            ddl.append(" WHERE name like ?");
-        }
+        ddl.append(condition);
         return ddl.toString();
     }
-    
+
     @Override
     public String toString() {
         GsonBuilder builder = new GsonBuilder();

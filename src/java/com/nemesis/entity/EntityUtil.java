@@ -131,4 +131,20 @@ public class EntityUtil {
             parameterIndex++;
         }
     }
+
+    public static <T extends Entity> void setLongValue(PreparedStatement prepareStatement, long value) throws SQLException {
+        setLongValue(prepareStatement, value, 1);
+    }
+
+    public static <T extends Entity> void setLongValue(PreparedStatement prepareStatement, long value, int index) throws SQLException {
+        prepareStatement.setLong(index, value);
+    }
+
+    public static <T extends Entity> void setStringValue(PreparedStatement prepareStatement, String value) throws SQLException {
+        setStringValue(prepareStatement, value, 1);
+    }
+
+    public static <T extends Entity> void setStringValue(PreparedStatement prepareStatement, String value, int index) throws SQLException {
+        prepareStatement.setString(index, value);
+    }
 }

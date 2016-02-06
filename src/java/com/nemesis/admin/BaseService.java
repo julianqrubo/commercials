@@ -5,14 +5,11 @@
  */
 package com.nemesis.admin;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
 import com.jolbox.bonecp.BoneCP;
-import com.nemesis.entity.Department;
 import com.nemesis.entity.Entity;
-import com.nemesis.entity.User;
 import com.nemesis.entity.EntityUtil;
+import com.nemesis.metadata.Ref;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
@@ -20,11 +17,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.Enumeration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -32,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import jdk.nashorn.internal.ir.annotations.Reference;
 
 /**
  *
@@ -76,6 +72,7 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
                 final T entty = getEntity().newInstance();
                 entty.setId(EntityUtil.getLong(id));
                 loadEntity(entty);
+                loadEntityRefs(rq, entty);
                 rq.setAttribute("_entity_", entty);
             } catch (IllegalArgumentException | IllegalAccessException ex) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
@@ -155,30 +152,48 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
         return "list".equalsIgnoreCase(getPart(4, parts));
     }
 
+    protected boolean isDelete(String... parts) {
+        if (parts == null) {
+            return false;
+        }
+        return "delete".equalsIgnoreCase(getPart(4, parts));
+    }
+
     protected boolean isSearch(String... parts) {
         return !isCreate(parts) && !isEdit(parts);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Enumeration<String> parameterNames = req.getParameterNames();
-        Map<String, String> params = new HashMap<>();
-        while (parameterNames.hasMoreElements()) {
-            String nextElement = parameterNames.nextElement();
-            params.put(nextElement, req.getParameter(nextElement));
-        }
-        try {
-            final String saveResult = save(beforeSave(req, EntityUtil.getEntity(getEntity(), req)));
-            if (saveResult != null) {
-                resp.sendRedirect(saveResult);
-            } else {
+        final String[] parts = req.getRequestURI().split("/");
+
+        if (isDelete(parts)) {
+            try {
+                final T entity = EntityUtil.getEntity(getEntity(), req);
+                entity.setId(Long.parseLong(parts[5]));
+                String delete_result = delete(entity);
                 try (PrintWriter writer = resp.getWriter()) {
-                    writer.println("Sata saved...");
+                    writer.println(delete_result);
                     writer.flush();
                 }
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (InstantiationException | IllegalAccessException ex) {
-            Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            try {
+                final T entity = EntityUtil.getEntity(getEntity(), req);
+                final String saveResult = save(beforeSave(req, entity));
+                if (saveResult != null) {
+                    resp.sendRedirect(saveResult);
+                } else {
+                    try (PrintWriter writer = resp.getWriter()) {
+                        writer.println("Sata saved...");
+                        writer.flush();
+                    }
+                }
+            } catch (InstantiationException | IllegalAccessException ex) {
+                Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
@@ -233,7 +248,8 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
         BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
         try {
             T entity = getEntity().newInstance();
-            try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(entity.getSelectSQL(2))) {
+            String listQuery = entity.getSelectSQL(2);
+            try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(listQuery)) {
                 prepareStatement.setString(1, request.getParameter("q").concat("%"));
                 ResultSet result = prepareStatement.executeQuery();
                 while (result.next()) {
@@ -245,16 +261,58 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         sendJSON(response, new GsonBuilder().create().toJson(entities));
     }
-    
-    protected void sendJSON(HttpServletResponse response, String json) throws IOException{
+
+    protected void sendJSON(HttpServletResponse response, String json) throws IOException {
         response.setContentType("application/json");
-        try( PrintWriter writer = response.getWriter()){
+        try (PrintWriter writer = response.getWriter()) {
             writer.print(json);
             writer.flush();
         }
-        
+
+    }
+
+    private String delete(T entity) throws IllegalArgumentException, IllegalAccessException {
+        BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
+        try {
+            final String saveSQL = entity.getDeleteSQL();
+            System.out.println(saveSQL);
+            try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(saveSQL)) {
+                EntityUtil.setLongValue(prepareStatement, entity.getId());
+                prepareStatement.executeUpdate();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return afterSaveUrl();
+    }
+
+    private void loadEntityRefs(HttpServletRequest rq, T entity) throws IllegalArgumentException, IllegalAccessException {
+        BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
+        List<Field> fields = EntityUtil.getFields(entity.getClass());
+        HashMap<String, Object> refParams = new HashMap<>();
+        try {
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(Ref.class)) {
+                    Ref ref = field.getAnnotation(Ref.class);
+                    StringBuilder query = new StringBuilder("SELECT ");
+                    query.append(ref.label()).append(" FROM ").append(EntityUtil.getFullTableName(ref.value())).append(" WHERE ").append(ref.id()).append(" = ?");
+                    String refSql = query.toString();
+                    try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(refSql)) {
+                        field.setAccessible(true);
+                        EntityUtil.setLongValue(prepareStatement, field.getLong(entity));
+                        final ResultSet set = prepareStatement.executeQuery();
+                        if( set.next() ){
+                            refParams.put(ref.labelField(), set.getString(1));
+                        }
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        rq.setAttribute("refs", refParams);
     }
 }

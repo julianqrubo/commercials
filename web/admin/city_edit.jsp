@@ -1,7 +1,7 @@
 <%@include file="templates/header.jsp" %>
 <h1>${_title_}</h1>
 
-<form action="${pageContext.servletContext.contextPath}/admin/departments" method="post" class="ui-filterable">
+<form action="${pageContext.servletContext.contextPath}/admin/cities" method="post" class="ui-filterable">
 
     <input type="hidden" id="id" name="id" value="${id}"/>
 
@@ -16,10 +16,18 @@
     <input id="country-label" autocomplete="off" data-type="search" placeholder="Selecciona un país..." value="${refs.countryLabel}">
     <input id="country" name="country" type="hidden" value="${_entity_.country}"/>
     <ul id="country-list" data-role="listview" data-inset="true" data-filter="true" data-input="#country-label" service="/admin/countries/list"></ul>
+    
+    
+    <label for="names">Departamento</label>
+
+    <input id="department-label" autocomplete="off" data-type="search" placeholder="Selecciona un departamento..." value="${refs.departmentLabel}">
+    <input id="department" name="department" type="hidden" value="${_entity_.department}"/>
+    <ul id="department-list" data-role="listview" data-inset="true" data-filter="true" data-input="#department-label" service="/admin/departments/list"></ul>
+    
 
     <input type="submit" value="Guardar" />
     <c:if test="${not empty id}">
-        <input type="button" value="Eliminar" id="delete_department" />
+        <input type="button" value="Eliminar" id="delete_city" />
     </c:if>
 
 </form>

@@ -5,14 +5,19 @@
  */
 package com.nemesis.entity;
 
+import com.nemesis.metadata.Ref;
+
 /**
  *
  * @author shareppy
  */
 public class City extends Entity{
     
+    @Ref(value=Country.class, labelField = "countryLabel")
     private long country;
+    @Ref(value=Department.class, labelField = "departmentLabel")
     private long department;
+    
     private String name;
     private String code;
     
@@ -30,7 +35,7 @@ public class City extends Entity{
     /**
      * @return the department
      */
-    public long getDepartement() {
+    public long getDepartment() {
         return department;
     }
     
