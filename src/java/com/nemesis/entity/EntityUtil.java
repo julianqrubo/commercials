@@ -5,12 +5,16 @@
  */
 package com.nemesis.entity;
 
+import com.nemesis.metadata.Fts;
 import java.lang.reflect.Field;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -48,6 +52,31 @@ public class EntityUtil {
         }
         return fieldValues;
     }
+    
+    public static Map<Field, Object> getFieldValuesMap(Entity entity) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException {
+        Map<Field, Object> fieldValues = new LinkedHashMap<>();
+        Field[] fields = entity.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            fieldValues.put(field, field.get(entity));
+        }
+        Field[] superFields = entity.getClass().getSuperclass().getDeclaredFields();
+        Field fieldId = null;
+        for (Field superField : superFields) {
+            if (entity.isEdit()) {
+                if (EntityUtil.isId(superField)) {
+                    fieldId = superField;
+                    continue;
+                }
+                superField.setAccessible(true);
+                fieldValues.put(superField, superField.get(entity));
+            }
+        }
+        if (entity.isEdit()) {
+            fieldValues.put( fieldId , entity.getId());
+        }
+        return fieldValues;
+    }
 
     public static <T extends Entity> T getEntity(Class<T> clazz, HttpServletRequest req) throws InstantiationException, IllegalAccessException {
         List<Field> fields = getFields(clazz);
@@ -80,7 +109,7 @@ public class EntityUtil {
         if (EntityUtil.isLong(type) || EntityUtil.isInt(type)) {
             return "integer";
         }
-        return "character varying(255)";
+        return "character varying";
     }
 
     public static long getLong(HttpServletRequest req, String key) {
@@ -117,18 +146,38 @@ public class EntityUtil {
         return "id".equalsIgnoreCase(field.getName());
     }
 
-    public static <T extends Entity> void setValues(PreparedStatement prepareStatement, T entity) throws IllegalArgumentException, IllegalAccessException, SQLException {
-        List<Object> fieldValues = EntityUtil.getFieldValues(entity);
+    public static <T extends Entity> void setValues(PreparedStatement prepareStatement, T entity) throws IllegalArgumentException, IllegalAccessException, SQLException, NoSuchFieldException {
+        Map<Field, Object> fieldValues = EntityUtil.getFieldValuesMap(entity);
         System.err.println(fieldValues);
         int parameterIndex = 1;
-        for (Object fieldValue : fieldValues) {
-            final Class<? extends Object> clazz = fieldValue.getClass();
+        for (Map.Entry<Field, Object> fieldValue : fieldValues.entrySet()) {
+            final Class<? extends Object> clazz = fieldValue.getValue().getClass();
             if (EntityUtil.isLong(clazz) || EntityUtil.isInt(clazz)) {
-                prepareStatement.setLong(parameterIndex, (Long) fieldValue);
-            } else if (EntityUtil.isString(fieldValue.getClass())) {
-                prepareStatement.setString(parameterIndex, (String) fieldValue);
+                prepareStatement.setLong(parameterIndex, (Long) fieldValue.getValue());
+            } else if (EntityUtil.isString(fieldValue.getValue().getClass())) {
+                prepareStatement.setString(parameterIndex, (String) fieldValue.getValue());
+                if( fieldValue.getKey().isAnnotationPresent(Fts.class) ){
+                    parameterIndex++;
+                    prepareStatement.setString(parameterIndex, (String) fieldValue.getValue());
+                }
             }
             parameterIndex++;
+        }
+    }
+
+    public static <T extends Entity> void setValues(PreparedStatement prepareStatement, Object[] values) throws IllegalArgumentException, IllegalAccessException, SQLException {
+        if (values != null) {
+            int parameterIndex = 1;
+            for (Object fieldValue : values) {
+                if (fieldValue == null) {
+                    prepareStatement.setNull(parameterIndex, Types.VARCHAR);
+                } else if( fieldValue instanceof Number ){
+                    prepareStatement.setLong(parameterIndex, (Long) fieldValue);
+                } else if (fieldValue instanceof String) {
+                    prepareStatement.setString(parameterIndex, (String) fieldValue);
+                }
+                parameterIndex++;
+            }
         }
     }
 

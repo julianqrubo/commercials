@@ -31,6 +31,8 @@ import javax.servlet.http.HttpSession;
     "/admin/cities", "/admin/departments/*", //
     "/admin/cities", "/admin/cities/*", //
     "/admin/ads", "/admin/ads/*", //
+    "/admin/images", "/admin/images/*", //
+    "/admin/banner", "/admin/banner/*", //
     "/admin/home.jsp"
 })
 public class AdminFilter implements Filter {

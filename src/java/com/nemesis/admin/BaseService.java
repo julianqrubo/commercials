@@ -27,7 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import jdk.nashorn.internal.ir.annotations.Reference;
 
 /**
  *
@@ -49,8 +48,11 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
             return;
         }
         try {
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher(getView(request, parts));
-            requestDispatcher.forward(request, response);
+            final String search_view = getView(request, response, parts);
+            if (search_view != null) {
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher(search_view);
+                requestDispatcher.forward(request, response);
+            }
         } catch (InstantiationException | IllegalAccessException e) {
             throw new ServletException("Error al mostrar la vista", e);
         }
@@ -61,8 +63,12 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
     }
 
     protected String getView(HttpServletRequest rq, String... parts) throws InstantiationException, IllegalAccessException {
+        return getView(rq, null, parts);
+    }
+
+    protected String getView(HttpServletRequest rq, HttpServletResponse response, String... parts) throws InstantiationException, IllegalAccessException {
         if (isCreate(parts)) {
-            return getEditView(rq, true);
+            return getEditView(rq, response, true);
         }
         if (isEdit(parts)) {
             final String id = getPart(5, parts);
@@ -77,15 +83,19 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
             } catch (IllegalArgumentException | IllegalAccessException ex) {
                 Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
             }
-            return getEditView(rq, false);
+            return getEditView(rq, response, false);
         }
         try {
-            rq.setAttribute("__list__", loadEntities());
+            rq.setAttribute("__list__", loadEntities(rq));
         } catch (IllegalArgumentException | IllegalAccessException | InstantiationException ex) {
             Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return getSearchView(rq);
+    }
+
+    protected String getEditView(HttpServletRequest request, HttpServletResponse response, boolean isCreate) {
+        return getEditView(request, isCreate);
     }
 
     protected String getEditView(HttpServletRequest request, boolean isCreate) {
@@ -111,7 +121,7 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
         }
     }
 
-    protected void getRowEntity(T entity, ResultSet result) throws IllegalArgumentException, SecurityException, IllegalAccessException, SQLException {
+    protected <E extends Entity> void getRowEntity(E entity, ResultSet result) throws IllegalArgumentException, SecurityException, IllegalAccessException, SQLException {
         List<Field> fields = EntityUtil.getFields(entity.getClass());
         for (Field field : fields) {
             Class<?> type = field.getType();
@@ -191,7 +201,7 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
                         writer.flush();
                     }
                 }
-            } catch (InstantiationException | IllegalAccessException ex) {
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | NoSuchFieldException ex) {
                 Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -201,7 +211,7 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
         return entity;
     }
 
-    protected String save(T entity) throws IllegalArgumentException, IllegalAccessException {
+    protected String save(T entity) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException {
         BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
         try {
             final String saveSQL = entity.getSaveSQL();
@@ -224,15 +234,25 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    protected List<T> loadEntities() throws IllegalArgumentException, IllegalAccessException, InstantiationException {
-        List<T> entities = new ArrayList<>();
+    protected String getSearchCondition() {
+        return "";
+    }
+
+    protected Object[] getSearchValues(HttpServletRequest request) {
+        return null;
+    }
+
+    protected <E extends Entity> List<E> loadEntities(HttpServletRequest request, Class<E> entityClass) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+        List<E> entities = new ArrayList<>();
         BoneCP connectionPool = (BoneCP) getServletContext().getAttribute("__pool__");
         try {
-            T entity = getEntity().newInstance();
-            try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(entity.getSelectSQL(true))) {
+            E entity = entityClass.newInstance();
+            final String selectSQL = entity.getSelectByCondition(getSearchCondition());
+            try (Connection connection = connectionPool.getConnection(); PreparedStatement prepareStatement = connection.prepareStatement(selectSQL)) {
+                EntityUtil.setValues(prepareStatement, getSearchValues(request));
                 ResultSet result = prepareStatement.executeQuery();
                 while (result.next()) {
-                    entity = getEntity().newInstance();
+                    entity = entityClass.newInstance();
                     getRowEntity(entity, result);
                     entities.add(entity);
                 }
@@ -241,6 +261,10 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
             Logger.getLogger(BaseService.class.getName()).log(Level.SEVERE, null, ex);
         }
         return entities;
+    }
+
+    protected List<T> loadEntities(HttpServletRequest request) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
+        return loadEntities(request, getEntity());
     }
 
     private void sendList(HttpServletRequest request, HttpServletResponse response, String part) throws InstantiationException, IllegalAccessException, IOException {
@@ -304,7 +328,7 @@ public abstract class BaseService<T extends Entity> extends HttpServlet {
                         field.setAccessible(true);
                         EntityUtil.setLongValue(prepareStatement, field.getLong(entity));
                         final ResultSet set = prepareStatement.executeQuery();
-                        if( set.next() ){
+                        if (set.next()) {
                             refParams.put(ref.labelField(), set.getString(1));
                         }
                     }

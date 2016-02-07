@@ -17,6 +17,21 @@
                     </ul>
                 </div>
             </li>
+            
+            <li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+                <h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+                    <a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
+                        Banner
+                    </a>
+                </h3>
+                <div class="ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed" aria-hidden="true">
+                    <ul>
+                        <li data-filtertext="form checkboxradio widget checkbox input checkboxes controlgroups"><a href="${pageContext.servletContext.contextPath}/admin/banner/create" data-ajax="false">Crear</a></li>
+                        <li data-filtertext="form checkboxradio widget radio input radio buttons controlgroups"><a href="${pageContext.servletContext.contextPath}/admin/banner" data-ajax="false">Buscar</a></li>
+                    </ul>
+                </div>
+            </li>
+            
             <li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
                 <h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
                     <a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
@@ -71,8 +86,21 @@
                     </ul>
                 </div>
             </li>
+            <li data-role="collapsible" data-enhanced="true" data-collapsed-icon="carat-d" data-expanded-icon="carat-u" data-iconpos="right" data-inset="false" class="ui-collapsible ui-collapsible-themed-content ui-collapsible-collapsed">
+                <h3 class="ui-collapsible-heading ui-collapsible-heading-collapsed">
+                    <a href="#" class="ui-collapsible-heading-toggle ui-btn ui-btn-icon-right ui-btn-inherit ui-icon-carat-d">
+                        Im&aacute;genes
+                    </a>
+                </h3>
+                <div class="ui-collapsible-content ui-body-inherit ui-collapsible-content-collapsed" aria-hidden="true">
+                    <ul>
+                        <li data-filtertext="form checkboxradio widget checkbox input checkboxes controlgroups"><a href="${pageContext.servletContext.contextPath}/admin/images/create" data-ajax="false">Crear</a></li>
+                        <li data-filtertext="form checkboxradio widget radio input radio buttons controlgroups"><a href="${pageContext.servletContext.contextPath}/admin/images" data-ajax="false">Buscar</a></li>
+                    </ul>
+                </div>
+            </li>
         </c:if>
-        <li data-filtertext="Cerrar sesión" data-icon="lock"><a href="${pageContext.servletContext.contextPath}/admin/logout">Cerrar sesi&oacute;n ( ${sessionScope.__user__.username} )</a></li>
+            <li data-filtertext="Cerrar sesión" data-icon="lock"><a href="${pageContext.servletContext.contextPath}/admin/logout" style="color: red!important;">Cerrar sesi&oacute;n ( ${sessionScope.__user__.username} )</a></li>
     </ul>
 </div><!-- /panel -->
 <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="jqm-footer">

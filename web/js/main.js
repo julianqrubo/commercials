@@ -8,12 +8,42 @@ $(document).on("pageload", function () {
 $(document).on("pagecreate", function () {
     setup_autocomplete("country");
     setup_autocomplete("department");
+    setup_autocomplete("city");
     setup_delete("country");
     setup_delete("department");
     setup_delete("city");
-
+    $('#fileupload').fileupload();
+    $('#fileupload').fileupload(
+            'option',
+            'redirect',
+            window.location.href.replace(
+                    /\/[^\/]*$/,
+                    '/cors/result.html?%s'
+                    )
+            );
+    $('#fileupload').fileupload({
+        autoUpload: true,
+        done: function (e, data) {
+            for (var i = 0; i<data.result.length; i++){
+                $( "#" + $(this).attr('path') ).val(data.result[i].path);
+                console.log(data.result[i]);
+            }
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .progress-bar').css(
+                'width',
+                progress + '%'
+            );
+        },
+        change: function (){
+          $('#progress .progress-bar').css(
+                'width',
+                '0%'
+            );  
+        }
+    });
 });
-
 //fns
 
 var setup_delete = function (delete_id) {
@@ -27,7 +57,6 @@ var setup_delete = function (delete_id) {
             }});
     });
 };
-
 var setup_autocomplete = function (autocomplete_id) {
     $("#" + autocomplete_id + '-list').on("filterablebeforefilter", function (e, data) {
         var $ul = $(this),
@@ -66,7 +95,6 @@ var setup_autocomplete = function (autocomplete_id) {
         }
     });
 };
-
 var confirmDialog = function (text, options) {
     var options = options || {
         title: "Confirmación",

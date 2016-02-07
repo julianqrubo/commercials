@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.StringJoiner;
 import com.nemesis.admin.utils.Constants;
+import com.nemesis.metadata.Fts;
 import java.io.Serializable;
 
 /**
@@ -43,6 +44,13 @@ public class Entity implements Serializable{
                 .append(" WHERE id = ? ");
         return sql.toString();
     }
+    
+    public String getCountSQL(String condition){
+        StringBuilder sql = new StringBuilder("SELECT COUNT(id) FROM ");
+        sql.append(EntityUtil.getFullTableName(getClass()))
+                .append(condition);
+        return sql.toString();
+    }
 
     public String getSaveSQL() {
         List<Field> fields = EntityUtil.getFields(getClass());
@@ -54,17 +62,18 @@ public class Entity implements Serializable{
         }
         StringJoiner cols = new StringJoiner(",");
         StringJoiner values = new StringJoiner(",");
-        for (Field field : fields) {
-            if ("id".equals(field.getName())) {
-                continue;
-            }
+        fields.stream().filter((field) -> !("id".equals(field.getName()))).forEach((field) -> {
             if (isEdit()) {
                 cols.add(" " + field.getName().concat(" = ?"));
             } else {
                 cols.add(field.getName());
                 values.add("?");
+                if( field.isAnnotationPresent(Fts.class) ){
+                    cols.add(field.getName().concat("_ts"));
+                    values.add("to_tsvector('spanish', ?)");
+                }
             }
-        }
+        });
         if (isEdit()) {
             sql.append(cols.toString()).append(" WHERE id = ?");
         } else {
@@ -87,6 +96,9 @@ public class Entity implements Serializable{
             }
             final Class<?> type = field.getType();
             ddl.append(",").append(field.getName()).append(" ").append(EntityUtil.getSQLType(type));
+            if( field.isAnnotationPresent(Fts.class) ){
+                ddl.append(",").append(field.getName()).append("_ts TSVECTOR");
+            }
         }
         ddl.append(",CONSTRAINT ").append(getClass().getSimpleName()).append("_pk PRIMARY KEY (id))");
         return ddl.toString();

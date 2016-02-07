@@ -7,8 +7,6 @@ package com.nemesis.admin;
 
 import com.nemesis.entity.EntityUtil;
 import com.nemesis.entity.User;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +20,7 @@ public class UserService extends BaseService<User> {
     @Override
     protected String getEditView(HttpServletRequest rq, boolean isCreate) {
         if (isCreate) {
-           setTitle(rq, "Crear un usuario");
+            setTitle(rq, "Crear un usuario");
             return "../user_edit.jsp";
         }
         setTitle(rq, "Editar un usuario");
@@ -34,7 +32,7 @@ public class UserService extends BaseService<User> {
         setTitle(rq, "Buscar usuarios");
         return "users.jsp";
     }
-    
+
     @Override
     protected String afterSaveUrl() {
         return getServletContext().getContextPath() + "/admin/users";

@@ -15,3 +15,54 @@ and open the template in the editor.
 .delete-entity{
     background-color: #ff0000!important;
 }
+
+body.public{
+    background-color: #555;
+    margin: 0px;
+    padding: 0px;
+}
+
+.user-header{
+    display: block;
+    height: 60px;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    background-color: #333;
+    z-index: 100;
+}
+
+.user-header > form{
+    position: absolute;
+    right: 30px;
+}
+
+.content{
+    padding-top: 60px;
+    display: block;
+    width: 1090px;
+    margin: auto;
+    height:100vh;
+    background-color: #ddd;
+    text-align: center;
+}
+
+.ad-title{
+    color: #fff;
+    background-color: #08b;
+    padding: 10px;
+}
+
+.ad-dsc{
+    padding: 10px;
+    
+}
+
+.image-file span{
+    text-shadow: none!important;
+}
+
+.image-file .ui-input-text,  .image-file .ui-body-inherit, .image-file .ui-corner-all, .image-file .ui-shadow-inset{
+    border: 0px!important;
+    text-shadow: none!important;
+}

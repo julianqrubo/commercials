@@ -31,7 +31,7 @@ import javax.servlet.http.HttpSession;
 public class HomeService extends BaseService {
 
     @Override
-    protected String getView(HttpServletRequest rq, String... parts) {
+    protected String getView(HttpServletRequest rq, HttpServletResponse response, String... parts) {
         final HttpSession session = rq.getSession(true);
         if( "logout".equals(getPart(3, parts)) ){
             session.removeAttribute(Constants.__USER__);

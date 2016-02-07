@@ -6,9 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Tus anuncios</title>
         <link rel="shortcut icon" href="${pageContext.servletContext.contextPath}/favicon.ico">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/themes/default/jquery.mobile-1.4.5.min.css">
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/_assets/css/jqm-demos.css">
         <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/main.css">
+        <link rel="stylesheet" href="${pageContext.servletContext.contextPath}/css/jquery.fileupload.css">
         <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700">
         <script>
             var _app_root = '${pageContext.servletContext.contextPath}';
@@ -16,6 +18,9 @@
         <script src="${pageContext.servletContext.contextPath}/js/jquery.js"></script>
         <script src="${pageContext.servletContext.contextPath}/_assets/js/index.js"></script>
         <script src="${pageContext.servletContext.contextPath}/js/jquery.mobile-1.4.5.min.js"></script>
+        <script src="${pageContext.servletContext.contextPath}/js/jquery.iframe-transport.js"></script>
+        <script src="${pageContext.servletContext.contextPath}/js/jquery.ui.widget.js"></script>
+        <script src="${pageContext.servletContext.contextPath}/js/jquery.fileupload.js"></script>
         <script src="${pageContext.servletContext.contextPath}/js/main.js"></script>
     </head>
     <body>
@@ -26,3 +31,6 @@
                 <!--<a href="#" class="jqm-search-link ui-btn ui-btn-icon-notext ui-corner-all ui-icon-search ui-nodisc-icon ui-alt-icon ui-btn-right">Search</a>-->
             </div><!-- /header -->
             <div role="main" class="ui-content jqm-content">
+                <c:if test="${not empty error}">
+                    <h4 class="ui-bar ui-bar-a ui-corner-all">${error}</h4>
+                </c:if>
